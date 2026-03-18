@@ -59,7 +59,7 @@ export interface BackendConfig {
 export const DEFAULT_BACKENDS: Record<string, BackendConfig> = {
   "playwright": {
     command: "npx",
-    args: ["@playwright/mcp@latest", "--headless"]
+    args: ["@playwright/mcp@latest", "--headless", "--save-video=1280x720"]
   },
   "chrome-devtools": {
     command: "npx",
