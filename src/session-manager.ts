@@ -1,3 +1,5 @@
+import path from "path";
+import os from "os";
 import { McpClient } from "./mcp-client.js";
 import {
   BackendConfig,
@@ -159,13 +161,22 @@ class SessionManager {
 
       const backend = options.backend ?? this.defaultBackend;
       const config = this.getBackendConfig(backend);
-      const client = new McpClient(config);
+
+      // Each session gets a unique output directory for video/trace files
+      const sessionId = crypto.randomUUID();
+      const outputDir = path.join(os.tmpdir(), "playwright-parallel-mcp", sessionId);
+      const sessionConfig: BackendConfig = {
+        ...config,
+        args: [...config.args, `--output-dir=${outputDir}`]
+      };
+
+      const client = new McpClient(sessionConfig);
 
       await client.start();
 
       const now = new Date();
       const session: Session = {
-        id: crypto.randomUUID(),
+        id: sessionId,
         client,
         backend,
         createdAt: now,
